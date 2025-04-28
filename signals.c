@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:29:18 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/25 15:51:03 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/26 22:34:33 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,5 +27,17 @@ void	sig_for_heredoc(int sig)
 		close(0); // closes stdin to break any blocking input reads
 		printf("\n"); // mimic shell behavior with a newline
 		msh_inf()->quit = 1;
+	}
+}
+
+void	signal_handler_main(int sig)
+{
+	if (sig == SIGINT && msh_inf()->interactive)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		msh_inf()->exit_status = 256 * 130;
 	}
 }

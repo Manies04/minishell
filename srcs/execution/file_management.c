@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 00:22:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/25 00:22:26 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/27 23:30:43 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static char	*get_heredoc_input(t_commands *current, int i)
 			str = NULL;
 			break ;
 		}
-		if (input == NULL)// if EOF is reached (ctrl+d)
+		if (input == NULL)// if EOF is reached (ctrl-d)
 			return (printf("(wanted '%s').\n", \
 				current->heredocs[i]), str);
 		if (!ft_strcmp(input, current->heredocs[i]))//if the input matches the heredoc delimiter
@@ -62,13 +62,13 @@ static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 	if (msh_inf()->quit)//checks if ctrl+c was pressed
 	{
 		close(fd);
-		exit_executor(exec, 1);///////////
+		exit_executor(exec, 1);
 	}
-	expander_heredoc(&str);////////////////expands the heredoc input
+	expander_heredoc(&str);//TODO expands the heredoc input
 	write(fd, str, ft_strlen(str));//writes the heredoc input to the temp file
 	close(fd);
 	free(str);
-	exit_executor(exec, 0);/////////////////////exits the child process with success.
+	exit_executor(exec, 0);// exits the child process with success.
 }
 
 /*@brief This function processes the heredoc files for the current command.
@@ -129,7 +129,7 @@ int	input_redirect(t_commands *current, t_exec *exec)
 			input = -2;//flag to indicate that the file was not opened successfully and end the loop.
 	}
 	if (input == -2)
-		redirect_error(current->infiles[i - 1]);///////////////////passes the last working file to the error function. why??
+		redirect_error(current->infiles[i - 1]);//TODO passes the last working file to the error function. ///////////////////////////////////////why??
 	if (!ft_strcmp(current->input, "\7\7") && input != -2)// if the less than is a heredoc, and the input file was opened successfully.
 		return (close_fd(input), heredoc);//close the input file and return the heredoc file descriptor.
 	return (close_fd(heredoc), input);//close the heredoc file and return the input file descriptor.
@@ -162,6 +162,6 @@ int	output_redirect(t_commands *current, t_exec *exec)
 		i++;
 	}
 	if (fd == -2)
-		redirect_error(current->outfiles[i - 1]);//last file attempted
+		redirect_error(current->outfiles[i - 1]);//TODO last file attempted
 	return (fd);
 }

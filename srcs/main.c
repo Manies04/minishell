@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 10:34:14 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/25 16:39:38 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:58:20 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 
 
 
-/* int	main(int argc, char **argv, char **envp)
+int	main(int ac, char **av, char **envp)
 {
 	char	*input;
 
-	(void)argv;
+	(void)av;
+	minishell_init(envp);
 	msh_inf()->pid = get_process();
-	if (argc != 1 && argc != 3)
+	if (ac != 1 && ac != 3)
 		return (write(1, "wrong arguments\n", 17));
-	get_env(envp);
 	while (1)
 	{
 		signal(SIGINT, signal_handler_main);
@@ -34,16 +34,38 @@
 		if (!input)
 			ft_exit(NULL, 0);
 		if (*input)
-			handle_input(input);
+			read_input(input);
 	}
-} */
+}
 
 
 
 
 
 
-int main(int argc, char **argv, char **envp)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* int main(int argc, char **argv, char **envp)
 {
 	minishell_init(envp);
 
@@ -139,7 +161,7 @@ int main(int argc, char **argv, char **envp)
 		}
 	}
 	clean_all();
-}
+} */
 
 
 //gcc -o minishell srcs/*.c srcs/builtins/*.c srcs/init/*.c srcs/utils/*.c srcs/expand/*.c inc/Libft/libft.a -lreadline

@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:17:30 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/04 15:16:06 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/27 14:21:28 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,25 @@ void	ft_env(char **arg, int fd)
 	while (*env) // Print all env vars
 		print_env(*env++);
 	msh_inf()->exit_status = 0;
+}
+
+int	is_builtin(char **command)
+{
+	if (!ft_strcmp(command[0], "exit"))
+		return (1);
+	if (!ft_strcmp(command[0], "echo"))
+		return (1);
+	if (!ft_strcmp(command[0], "pwd"))
+		return (1);
+	if (!ft_strcmp(command[0], "unset"))
+		return (1);
+	if (!ft_strcmp(command[0], "export"))
+		return (1);
+	if (!ft_strcmp(command[0], "cd"))
+		return (1);
+	if (!ft_strcmp(command[0], "env"))
+		return (1);
+	return (0);
 }
 /*
 env is a builtin command that prints the current environment variables and

@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:54:50 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/26 00:12:16 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/27 14:28:27 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	do_multable_builtin(t_commands *current, t_exec *exec)
 		!ft_strcmp(current->command[0], "cd")))
 	{
 		exec->files[0] = input_redirect(current, exec);
-		exec->files[1] = output_redirect(current, exec);//
+		exec->files[1] = output_redirect(current, exec);
 		executor_router(current->command, exec);
 		return (1);
 	}
@@ -58,7 +58,7 @@ static void	child_routine(t_commands *current, t_exec *exec)
 
 	if (exec->files[0] == -2 || exec->files[1] == -2)// if there was an error opening the input or output file
 		exit_executor(exec, 1);
-	if (current->command && !is_builtin(current->command))// if the command exists and it's not a built-in
+	if (current->command && !is_builtin(current->command))//if the command exists and it's not a built-in
 	{
 		valid_path = check_valid_command(current->command[0], exec);//checks if the command is a valid path
 		if (!valid_path)
@@ -94,17 +94,15 @@ static int	do_commands(t_commands *current, t_exec *exec)
 		if (check_errors(exec, i))// checks for user interrupts or errors
 			return (0);
 		if (exec->pids[i++] == 0)// if we are in the child process
-			child_routine(current, exec);//TODO sets up the child’s file descriptors (e.g., redirecting stdin/stdout to pipes or files) and executes the command (either a built-in or an external program via execve).
-		close_fds(exec->fd);
-		close_fds(exec->files);
-		exec->fd[0] = exec->next_fd[0];
-		exec->fd[1] = exec->next_fd[1];
-		current = current->next;
+			child_routine(current, exec);//sets up the child’s file descriptors (e.g., redirecting stdin/stdout to pipes or files) and executes the command (either a built-in or an external program via execve).
+		close_pipe_ends(exec->fd);// closes the ends of the previous pipe
+		close_pipe_ends(exec->files);// closes the input and output files
+		exec->fd[0] = exec->next_fd[0];// sets the read end of the current pipe to the read end of the next pipe
+		exec->fd[1] = exec->next_fd[1];// sets the write end of the current pipe to the write end of the next pipe
+		current = current->next;// moves to the next command
 	}
-	return (close_fds(exec->next_fd), 1);
+	return (close_pipe_ends(exec->next_fd), 1);// closes the ends of the last pipe and returns 1 to indicate success
 }
-
-
 
 /**@brief This is the main function to execute the commands.
  * @param commands A pointer to the commands to be executed.

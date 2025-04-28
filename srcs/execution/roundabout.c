@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 02:16:58 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/20 19:39:32 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/28 02:41:35 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	bultin_roundabout(char **commands)
 
 	is_builtin = 1;
 	if (!ft_strcmp(commands[0], "exit"))
-		ft_exit(commands);
+		ft_exit(commands, 0);
 	else if (!ft_strcmp(commands[0], "pwd"))
 		ft_pwd(1);
 	else if (!ft_strcmp(commands[0], "echo"))
@@ -96,7 +96,7 @@ static char	*get_path(char *command)
 			break ;
 		i++;
 	}
-	free_double_array(directories);///////////
+	free_double_array(directories);
 	return (valid_path);
 }
 
@@ -122,7 +122,7 @@ char	*check_valid_command(char *command, t_exec *exec)
 	if (!valid_path)
 	{
 		print_error(command, ": not found :(\n");
-		exit_executor(exec, 127);///////////////
+		exit_executor(exec, 127);
 	}
 	return (valid_path);
 }
@@ -138,16 +138,16 @@ void	executor_router(char **command, t_exec *exec)
 	char	**env;
 
 	if (!command)//if no command is given, exit
-		ft_exit(NULL);
+		ft_exit(NULL, 0);
 	if (bultin_roundabout(command))//if builtin it gets executed and we then return
 		return ;
-	valid_path = check_valid_command(command[0], exec);////////////
+	valid_path = check_valid_command(command[0], exec);//checks if the command is a valid path
 	env = msh_inf()->env;
 	if (execve(valid_path, command, env) == -1)//if error
 	{
 		perror(valid_path);
 		free(valid_path);
-		free_double_array(env);///////
-		exitwcode(126);////////////
+		free_double_array(env);
+		ft_exit(NULL, 126);
 	}
 }

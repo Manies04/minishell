@@ -6,11 +6,11 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 22:33:39 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/21 22:45:21 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/26 23:54:04 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 /* @brief Closes the file descriptors if they are not set to -1 or -2.
  * @param fd The file descriptor array to close.
