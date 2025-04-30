@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 17:06:52 by joaoleote         #+#    #+#             */
-/*   Updated: 2025/04/28 02:14:33 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/04/30 15:24:14 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ static t_commands	*new_command(char *command)
 	if (!new)
 		return ((void *)0);
 	splitted = ft_split(command, SPACE_MARKER);
-	splitted = expander(splitted);//TODO where is it? WE HAVE 
+	splitted = expander(splitted);//TODO where is it? WE HAVE EXPAND_VARS 
 	new->output = get_great(splitted);
 	new->input = get_less(splitted);
 	new->outfiles = get_output_files(splitted);
 	new->infiles = get_input_files(splitted, LESS_MARKER);
 	new->heredocs = get_input_files(splitted, LESSER_MARKER);
-	new->command = get_commmand(splitted);
+	new->command = get_command(splitted);
 	new->next = (void *)0;
 	free_double_array(splitted);
 	return (new);
