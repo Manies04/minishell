@@ -6,117 +6,203 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:46:45 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/19 12:36:38 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:45:10 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-/**@brief This function checks if the string contains a "$" followed by a 
- * non-space character.
- * @param str The string to check
- * @return true if the string contains a "$" followed by a non-space character
+/**@brief This function extracts the key (name part) from a variable string.
+ * @param variable The variable string (e.g., "PATH=/usr/bin")
+ * @return The key part of the variable (e.g., "PATH")
  */
-static int	is_expansion_needed(const char *str)
+char	*get_env_key(char *variable)
 {
-	int	i;
+	char	*env_key;
+	if (ft_strchr(variable, '='))// if the variable has an equal sign
+		env_key = ft_strndup(variable, ft_strchr(variable, '=') - variable);//get the part before the equal sign ("PATH=/usr/bin" -> "PATH")
+	else
+		env_key = ft_strndup(variable, ft_strlen(variable));//duplicate the whole variable
+	return (env_key);
+}
 
-	i = -1;
-	while (str[++i])
+/**@brief This function extracts the variable name (after '$').
+ * @param str The string to extract from the variable name from
+ * @return The variable name (e.g., "PATH", "HOME", etc.)
+ */
+char	*get_var_name(char *str)
+{
+	char	*sendable;//string to hold the variable name
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	sendable = malloc(sizeof(char) * (ft_strlen(str) + 1));//allocate memory for the variable name
+	if (!sendable)//allocation failed
+		return (NULL);
+	while (str[i] && str[i] != '$')//skip to the first $
+		i++;
+	if (str[i] == '$')//move past the $
+		i++;
+	while (str[i] && (ft_isalpha(str[i]) || str[i] == '_' || ft_isdigit(str[i])))//copies chars that are valid into sendable(letter, digit or "_")
+		sendable[j++] = str[i++];
+	if (j == 0 && str[i] && (str[i] == '?' || str[i] == '$' || str[i] == '0'))// if no char was copied and the next char is a special case, copy it
+		sendable[j++] = str[i++]; // Handles $?, $$, $0 cases
+	sendable[j] = '\0';
+	return (sendable);
+}
+
+/**@brief This function replaces a variable (starting with $) in a string with 
+ * its expanded value
+ * @param str The string to manipulate
+ * @param add The string to add(expansion)
+ * @param size The size of the variable name
+ * @return The string with the variable replaced with its value
+ */
+char	*add_expansion(char **str, char *add, int size)
+{
+	char	*temp;
+	char	*result;
+	int		i;
+	int		j;
+	int		k;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	temp = *str;
+	if (!temp || !add)
+		return (NULL);
+	result = malloc(sizeof(char) * (ft_strlen(temp) + ft_strlen(add) + 1));// allocate memory for the new string
+	if (!result)//allocation failed
+		return (NULL);
+	while (temp[k] && temp[k] != '$')//copy chars until the first $
+		result[i++] = temp[k++];
+	if (temp[k] == '$')//'$' is found
 	{
-		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ' && str[i + 1] != '$')//if the str has a $ and there is another char and the next char is not a space or another $.
-			return (1);//normal case
-		else if (str[i] == '$' && str[i + 1] && str[i + 1] == '$')//if the str has a $ and there is another char and the next char is a $.
-			return (2);//"$$" case, we need to check if the next char is a space or another $. in the next function we check the amount of "$" and if there are odd or even to print the right amount of pid.
-		else if (str[i] == '$' && str[i + 1] && str[i + 1] == '?')//if the str has a $ and there is another char and the next char is a ? (exit status).
-			return (3);//"$?" case.
+		k++; // Skip the '$'
+		if (temp[k] && ((temp[k] >= '0' && temp[k] <= '9') || temp[k] == '?' || temp[k] == '$'))//if the next char is a special case
+			k++; // Skip the special case
+		else
+			k += size; // Skip variable name
 	}
-	return (0);
+	while (add[j])
+		result[i++] = add[j++];//copy the expanded value into result
+	while (temp[k])
+		result[i++] = temp[k++];//copy the rest of the str(temp), after the variable already in result
+	result[i] = '\0';
+	free(temp);
+	*str = result;//update the pointer
+	return (result);
 }
 
 /**@brief Handles special expansions $? and $$.
  * @param str Variable name ("?" or "$...")
  * @return Expanded value as a new string
  */
-static char *expand_special(char *str)
+static char	*expand_special(char *str)
 {
-	int		pid;
-	int		count;
-	char	*pid_str;
-	char	*result;
-	char	*temp;
-
-	if (str[0] == '?')
-		return (ft_itoa(msh_inf()->exit_status));//exit status returned for "$?"
-	if (str[0] != '$')
-		return (ft_strdup(""));//if here by mistake
-	count = 0;
-	while (str[count] == '$')//"$$"
-		count++;
-	count = (count + 1) / 2;//adds one cause we started in str+1, then divides cause we need them to be in pairs of 2
-	pid = getpid();
-	pid_str = ft_itoa(pid);
-	result = ft_strdup("");
-	while (count-- > 0)//while we have pairs
-	{
-		temp = result;
-		result = ft_strjoin(temp, pid_str, 0);//join the pids
-		free(temp);
-	}
-	free(pid_str);
-	return (result);
+	if (str[0] == '?')//$?
+		return (ft_itoa(msh_inf()->exit_status / 256));
+	if (str[0] == '$')//$$
+		return (ft_itoa(msh_inf()->pid));
+	return (ft_strdup(""));
 }
 
 /**@brief Expands a variable name (after $) into its value.
  * @param str Variable name (e.g., "HOME", "?", "$")
  * @return Expanded value as a new string, or "" if not found
  */
-static char	*expand_var(char *str)
+char	*expand_var(char *str)
 {
 	char	**env;
-	char	*value;
+	char	*key;
 	int		i;
 
-	if (str[0] == '?' || str[0] == '$')
-		return (expand_special(str));//expecial type
-	env = msh_inf()->env;
 	i = -1;
+	env = msh_inf()->env;
+	if (ft_strcmp(str, "0") == 0)//$0 case
+		return (ft_strdup("minishell"));
+	if (str[0] == '?' || str[0] == '$')//$? $$ cases
+		return (expand_special(str));
 	while (env[++i])
 	{
-		if (ft_strncmp(env[i], str, ft_strchr(env[i], '=') - env[i]) == 0
-			&& ft_strlen(str) == (size_t)(ft_strchr(env[i], '=') - env[i]))//Compares str with the key portion of env[i] (up to the =) and ensures str’s length exactly matches the key’s length.
+		key = get_env_key(env[i]);//get the key from the env variable
+		if (ft_strcmp(key, str) == 0)//compares it with variable name
 		{
-			value = ft_strdup(ft_strchr(env[i], '=') + 1);//copies the value part skipping "="
-			return (value);
+			free(key);
+			return (ft_strdup(ft_strchr(env[i], '=') + 1));//returns the value of the variable if found
 		}
+		free(key);
 	}
-	return (ft_strdup(""));
+	return (ft_strdup(""));//if not found, return empty string
 }
 
-/**@brief Expands environment variables in a string.
+/**@brief This function replaces all \10 with $ in the string.
+ * @param str The string to manipulate
+ * @return Void
+ */
+void	marker_to_dollar(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '\10')
+			str[i] = '$';
+		i++;
+	}
+}
+
+/**@brief This function expands the heredoc string by replacing all variables with their values and the reverts the marker \10 to $.
+ * @param str The string to manipulate
+ * @return Void
+ */
+void	expand_heredoc(char **str)
+{
+	char	*expanded;
+
+	expanded = expand_env_vars(*str);//expand the string
+	marker_to_dollar(expanded);//replace \10 with $
+	free(*str);
+	*str = expanded;
+}
+
+/**@brief Expands environment variables in a string, skipping single-quoted 
+ * sections.
  * @param str The string to expand
  * @return Expanded string
  */
-char *expand_env_vars(const char *str)
+char	*expand_env_vars(const char *str)
 {
-	int		type;//what type of expansion (0 = none, 1 = normal, 2 = $$, 3 = $?)
-	char	*var_value;//Value of the var
-	char	*result;//final str
+	char	*result;
+	char	*var_name;
+	char	*var_value;
 	char	*temp;
+	int		i;
 
-	type = is_expansion_needed(str);//checks what type of expansion is needed
-	if (type == 0)
-		return (ft_strdup(str));//return as is
-	var_value = expand_var((char *)str + 1);//gets the var value, sending str + 1 so it skips the "$" at 1st position
-	if (ft_strlen(str) == ft_strlen(str + 1) + 1)
-		return (var_value);
-	temp = ft_substr(str, 0, ft_strchr(str, '$') - str);//extracts the prefix of the str (whats before the "$")
-	result = ft_strjoin(temp, var_value, 0);//Combines the prefix and the expanded variable value. 
-	free(temp);
-	temp = result;
-	result = ft_strjoin(temp, str + ft_strlen(str + 1) + 1, 0);
-	free(temp);
-	free(var_value);
+	i = 0;
+	result = ft_strdup(str);
+	while (result[i])//loop through the string
+	{
+		if (result[i++] == '\5') // Skip single-quoted sections
+			while (result[i] && result[i] != '\5')
+				i++;
+		else if (result[i] == '$' && result[i + 1] && !is_whitespace(result[i + 1]))//if a $ is found and the next char is not a white space
+		{
+			var_name = get_var_name(result + i); // Extract variable name
+			var_value = expand_var(var_name); // Get value
+			temp = result;
+			result = add_expansion(&temp, var_value, ft_strlen(var_name)); // Replace variable with value
+			free(temp);
+			free(var_name);
+			free(var_value);
+			i = 0; // Restart to check for more expansions
+		}
+		else
+			i++;//move to the next char
+	}
 	return (result);
 }
-

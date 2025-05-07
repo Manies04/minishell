@@ -6,7 +6,7 @@
 #    By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/15 11:41:01 by tiade-al          #+#    #+#              #
-#    Updated: 2025/03/12 14:37:51 by tiade-al         ###   ########.fr        #
+#    Updated: 2025/05/07 01:47:09 by tiade-al         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ ft_lstsize.c ft_lstnew.c ft_lstadd_front.c ft_lstlast.c\
 ft_lstadd_back.c ft_lstdelone.c ft_lstiter.c ft_lstiter.c\
 ft_lstmap.c ft_lstclear.c\
 get_next_line_utils.c get_next_line.c\
-ft_is_numeric.c ft_atoll.c ft_strcmp.c
+ft_is_numeric.c ft_atoll.c ft_strcmp.c ft_strndup.c\
 
 OBJS			= $(SRCS:.c=.o)
 

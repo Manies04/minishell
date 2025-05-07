@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 00:22:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 23:30:43 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 23:27:16 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 	char	*str;// stores the heredoc input
 	int		fd;//stores the fd for the temporary file
 
-	signal(SIGINT, sig_for_heredoc);//sets the signal handler for ctrl+c
+	signal(SIGINT, sig_for_heredoc);// sets the signal handler for ctrl+c
 	fd = open(".temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);//opens or creates the temp file for writing. The "." before tempmakes it a hidden file.
 	str = get_heredoc_input(current, i);//gets the heredoc input from the user
 	if (msh_inf()->quit)//checks if ctrl+c was pressed
@@ -64,7 +64,7 @@ static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 		close(fd);
 		exit_executor(exec, 1);
 	}
-	expander_heredoc(&str);//TODO expands the heredoc input
+	expand_heredoc(&str);//FIXME think it's done(bellow func works) expands the environment variables in the heredoc input
 	write(fd, str, ft_strlen(str));//writes the heredoc input to the temp file
 	close(fd);
 	free(str);
@@ -129,7 +129,7 @@ int	input_redirect(t_commands *current, t_exec *exec)
 			input = -2;//flag to indicate that the file was not opened successfully and end the loop.
 	}
 	if (input == -2)
-		redirect_error(current->infiles[i - 1]);//TODO passes the last working file to the error function. ///////////////////////////////////////why??
+		redirect_error(current->infiles[i - 1]);// passes the last working file to the error function. ///////////////////////////////////////why??
 	if (!ft_strcmp(current->input, "\7\7") && input != -2)// if the less than is a heredoc, and the input file was opened successfully.
 		return (close_fd(input), heredoc);//close the input file and return the heredoc file descriptor.
 	return (close_fd(heredoc), input);//close the heredoc file and return the input file descriptor.
@@ -162,6 +162,6 @@ int	output_redirect(t_commands *current, t_exec *exec)
 		i++;
 	}
 	if (fd == -2)
-		redirect_error(current->outfiles[i - 1]);//TODO last file attempted
+		redirect_error(current->outfiles[i - 1]);// last file attempted
 	return (fd);
 }

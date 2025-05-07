@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 11:15:13 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/18 23:42:41 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:54:12 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strjoin(char *s1, char *s2, int free_line)
 	int		i;
 	int		l;
 
-	if (!s1 && free)
+	if (!s1 && free_line)
 	{
 		s1 = (char *)malloc(1 * sizeof(char));
 		s1[0] = '\0';

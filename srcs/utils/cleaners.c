@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 11:02:47 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 23:39:33 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 22:24:24 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	free_double_array(char **array)
 
 void	exit_executor(t_exec *exec, int exit_status)
 {
-	free(exec->pids);
+	//free(exec->pids);//FIXME double free cause?
 	msh_inf()->quit = 0;
 	close_pipe_ends(exec->fd);
 	close_pipe_ends(exec->files);

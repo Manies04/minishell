@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:49:34 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/26 23:17:19 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/04 17:03:33 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	read_input(char *input)
 
 	add_history(input);//adds the input to the history
 	new = lexer(input);
+	free(input);
 	if (!new)
 		return ;
 	parser(new);

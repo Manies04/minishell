@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:11:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/25 16:40:27 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:53:30 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,19 +117,12 @@ static void update_export(char *key, char *new_var, char *equal_sign)
 	if (index >= 0)
 	{
 		if (ft_strchr(msh_inf()->export[index], '=') && !equal_sign)
-		{
-			printf("Export: Skipping downgrade\n");
 			return ;
-		}
 		free(msh_inf()->export[index]);
 		msh_inf()->export[index] = ft_strdup(new_var);
-		printf("Export: Updated to '%s'\n", new_var);
 	}
 	else
-	{
-		printf("Export: Adding new '%s'\n", new_var);
 		add_new_env_var(new_var, &msh_inf()->export);
-	}
 }
 
 /* Updates env array if '=' is present */
@@ -144,13 +137,9 @@ static void update_env(char *key, char *new_var, char *equal_sign)
 	{
 		free(msh_inf()->env[index]);
 		msh_inf()->env[index] = ft_strdup(new_var);
-		printf("Env: Updated to '%s'\n", new_var);
 	}
 	else
-	{
-		printf("Env: Adding new '%s'\n", new_var);
 		add_new_env_var(new_var, &msh_inf()->env);
-	}
 }
 
 static int set_env_var(char *arg, int fd)//begins here 1st
@@ -161,15 +150,13 @@ static int set_env_var(char *arg, int fd)//begins here 1st
 
 	if (init_env_var(arg, &key, &new_var, &equal_sign) < 0)
 		return (1);
-	if (!is_valid_identifier(key))////////////////////////////////seg faults if not valid identifier(ex.: export batata-).
+	if (!is_valid_identifier(key))//FIXME seg faults if not valid identifier(ex.: export batata-).
 	{
 		free(key);
 		free(new_var);
 		return (handle_invalid_identifier(arg, fd, equal_sign));
 	}
-	printf("Export: Looking for '%s'\n", key);
 	update_export(key, new_var, equal_sign);
-	printf("Env: Looking for '%s'\n", key);
 	update_env(key, new_var, equal_sign);
 	free(key);
 	free(new_var);

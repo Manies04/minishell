@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:53:29 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 23:26:41 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:39:39 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,6 @@
 # include <sys/types.h>
 # include <errno.h>
 #include "../inc/Libft/libft.h"
-
-# define DQUOTE '\x10' // For "
-# define SQUOTE '\x11' // For '
-# define SPACE_MARKER '\x12' // For ' '
-# define PIPE_MARKER '\x13' // For |
-# define LESS_MARKER '\x14' // For <
-# define GREAT_MARKER '\x15' // For >
-# define LESSER_MARKER '\x14\x14' // For <<
-# define GREATER_MARKER '\x15\x15' // For >>
-
 
 typedef struct s_commands //has the commands separated by the pipes
 {
@@ -108,6 +98,8 @@ void	executor(t_commands **commands);
 
 /* ------------------EXPANSION------------------- */
 char	*expand_env_vars(const char *str);
+void	expand_heredoc(char **str);
+char	**expander(char **str);
 
 /* ------------------HELPERS------------------- */
 void	free_array(char **args);
@@ -124,6 +116,7 @@ void	signal_handler_main(int sig);
 void	exit_executor(t_exec *exec, int exit_status);
 void	redirect_error(char *file);
 void	print_error(char *value, char *message);
+void	redirect_error(char *file);
 
 /* ------------------PARSER------------------- */
 int			is_redirection(char *str);
@@ -141,5 +134,27 @@ void		signal_handler_heredoc(int sig);
 void		read_input(char *input);
 char		*lexer(char *input);
 
+/* ------------------Signals------------------- */
+void		signal_handler_child(int sig);
+void		signal_handler_main(int sig);
+void		sig_for_heredoc(int sig);
 
+
+
+char		*get_var_name(char *str);
+char		*add_expansion(char **new_str, char *add, int size);
+char		*expand_var(char *str);
+char		*get_env_key(char *variable);
+char		*ft_strndup(char const *s1, unsigned int n);
+
+
+// '\2' =   = SPACE
+// '\3' = | = PIPE
+// '\4' = " = DQUOTES
+// '\5' = ' = SQUOTES
+// '\6' = > = GREATER
+// "\6\6" = >> = APPEND
+// '\7' = < = LESS
+// "/7/7" = << = HEREDOC
+// '\10' = $ = DOLLAR
 #endif

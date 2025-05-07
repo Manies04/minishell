@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 13:46:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 23:20:57 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:49:26 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,11 +120,12 @@ exit codes go from 0 to 255.
 
 static void	exitwcode(int exit_code)//FIXME is only this to free?
 {
-	free_structs(); // Free all allocated memory
+	
+	//free_structs(); // Free all allocated memory
 /* 	free_env(msh_inf()->env); //TODO Free environment
 	if (msh_inf()->commands)
 		free_commands(msh_inf()->commands); // Free commands */
-	rl_clear_history(); // Clear readline history
+	//rl_clear_history(); // Clear readline history
 	exit(exit_code);
 }
 

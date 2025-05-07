@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/10 13:02:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/18 23:46:13 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/07 01:55:18 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int			ft_atoi(const char *nptr);
 void		*ft_calloc(size_t nmemb, size_t size);
 char		*ft_strdup(const char *s);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
-char		*ft_strjoin(char const *s1, char const *s2, int free_line);
+char		*ft_strjoin(char *s1, char *s2, int free_line);
 char		*ft_strtrim(char const *s1, char const *set);
 char		**ft_split(char const *s, char c);
 char		*ft_itoa(int n);
@@ -84,5 +84,6 @@ t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 bool		ft_is_numeric(const char *str);
 long long	ft_atoll(const char *str);
 int			ft_strcmp(const char *s1, const char *s2);
+char		*ft_strndup(char const *s1, unsigned int n);
 
 #endif

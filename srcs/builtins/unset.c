@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 11:15:26 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/20 16:39:26 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:56:05 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ void	ft_unset(char **token)
 
 	while (token[++position]) // For every token
 	{
-		printf("token: %s\n", token[position]);
-
 		// Skip tokens with '=' (e.g., "batta1=", "batata2=yes")
 		if (ft_strchr(token[position], '=') != NULL)
 			continue;

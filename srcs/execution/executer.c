@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:54:50 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 14:28:27 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/04 15:18:32 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,26 +113,26 @@ void	executor(t_commands **commands)
 	t_commands	*current;//points to the current command
 	t_exec		exec;//execution structure
 	int			i;//index to iterate through the pids
-	int			total;//total number of commands
+	int			status;
 
 	current = *commands;//points to the first command
-	total = msh_inf()->num_of_commands;
 	if (do_multable_builtin(current, &exec))//checks if the command is a builtin, if so no execution is needed. "&" lets the function modify the original pointer.
 		return ;
-	exec.pids = malloc(sizeof(int) * total);//allocates memory for the pids and will be used later to waitpid() each child.
+	exec.pids = malloc(sizeof(int) * msh_inf()->num_of_commands);//allocates memory for the pids and will be used later to waitpid() each child.
 	init_fds(&exec.fd, NULL);//initialization of the file descriptors
 	if (!do_commands(current, &exec))//Executes the parsed commands. If error occurs, it returns.
 		return ;
 	i = 0;
-	while (i < total)//waits for each child process to finish.
+	while (i < msh_inf()->num_of_commands)
 	{
-		waitpid(exec.pids[i++], &msh_inf()->exit_status, 0);
-		if (msh_inf()->sig_int)//ctrl-c
-			msh_inf()->exit_status = 256 * 130;
-		if (msh_inf()->sig_quit)//"ctrl-\"
-			msh_inf()->exit_status = 256 * 131;
-		msh_inf()->sig_int = 0;//reset for future command executions.
-		msh_inf()->sig_quit = 0;//reset for future command executions.
+		waitpid(exec.pids[i++], &status, 0);
+		msh_inf()->exit_status = (status >> 8) & 0xFF;//correctly sets the exit status given by the child process.
+		if (msh_inf()->sig_int)
+			msh_inf()->exit_status = 130;
+		else if (msh_inf()->sig_quit)
+			msh_inf()->exit_status = 131;
+		msh_inf()->sig_int = 0;
+		msh_inf()->sig_quit = 0;
 	}
 	free(exec.pids);
 }

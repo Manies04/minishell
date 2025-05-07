@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 02:16:58 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/28 02:41:35 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 22:27:52 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ char	*check_valid_command(char *command, t_exec *exec)
 		valid_path = get_path(command);//////////path variable to search on
 	if (!valid_path)
 	{
-		print_error(command, ": not found :(\n");
+		print_error(command, ": command not found\n");
 		exit_executor(exec, 127);
 	}
 	return (valid_path);

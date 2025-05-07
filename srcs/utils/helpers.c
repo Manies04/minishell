@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 23:58:35 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 21:45:48 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:50:56 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ int	get_process(void)
 
 int	is_redirection(char *str)
 {
-	if (!ft_strcmp(str, GREAT_MARKER) || \
-			!ft_strcmp(str, "\x15\x15") || \
-			!ft_strcmp(str, LESS_MARKER) || \
-			!ft_strcmp(str, "\x14\x14"))
+	if (!ft_strcmp(str, "\6") || \
+			!ft_strcmp(str, "\6\6") || \
+			!ft_strcmp(str, "\7") || \
+			!ft_strcmp(str, "\7\7"))
 			return (1);
 	return (0);
 }

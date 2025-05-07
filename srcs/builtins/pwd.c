@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 12:39:26 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/25 00:21:44 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/02 21:54:58 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,6 @@ static char	*value_helper(const char *str)
 	int		i;
 	char	*value;
 
-	printf("...getting value for cd: '%s'\n\n", str);
 	if (!str)
 		return (NULL);
 	i = 0;
@@ -120,7 +119,6 @@ static char	*value_helper(const char *str)
 	value = ft_strdup(&str[i]);  // Duplicate the substring directly
 	if (!value)
 		return (NULL);
-	printf("VALUE: '%s'\n\n", value);
 	return (value);
 }
 
@@ -142,10 +140,7 @@ static char	*get_var_value(char *wanted)
 	while (env[++i])
 	{
 		if (ft_strncmp(wanted, env[i], ft_strlen(wanted)) == 0 && env[i][ft_strlen(wanted)] == '=')
-		{
-			printf("found\n");
 			return (value_helper(env[i]));
-		}
 	}
 	return (ft_strdup(""));
 }
