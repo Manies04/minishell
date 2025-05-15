@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:53:29 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:25:46 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:37:37 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,6 @@ char		**get_input_files(char **str, char *c);
 char		**get_output_files(char **str);
 void		parser(char *input);
 int			get_process(void);
-void		signal_handler_heredoc(int sig);
 void		read_input(char *input);
 char		*lexer(char *input);
 
