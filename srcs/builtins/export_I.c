@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:11:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 21:53:30 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/14 13:11:29 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	sort_env(char **env, int size)
  * @param fd The fd to write to.
  * @return Void.
  */
-static void print_export(char **env, int fd)
+static void	print_export(char **env, int fd)
 {
 	int count;//keeps track of how many variables there are
 	char **env_copy;//a to be copy of the variables
@@ -83,7 +83,7 @@ static int env_find(char *key, char **env)
 }
 
 /* Sets key and new_var based on arg */
-static int init_env_var(char *arg, char **key, char **new_var, char **equal_sign)
+static int	init_env_var(char *arg, char **key, char **new_var, char **equal_sign)
 {
 	*equal_sign = ft_strchr(arg, '=');
 	if (*equal_sign)
@@ -109,9 +109,9 @@ static int init_env_var(char *arg, char **key, char **new_var, char **equal_sign
 }
 
 /* Updates export array with downgrade protection */
-static void update_export(char *key, char *new_var, char *equal_sign)
+static void	update_export(char *key, char *new_var, char *equal_sign)
 {
-	int index;
+	int	index;
 
 	index = env_find(key, msh_inf()->export);
 	if (index >= 0)
@@ -126,9 +126,9 @@ static void update_export(char *key, char *new_var, char *equal_sign)
 }
 
 /* Updates env array if '=' is present */
-static void update_env(char *key, char *new_var, char *equal_sign)
+static void	update_env(char *key, char *new_var, char *equal_sign)
 {
-	int index;
+	int	index;
 
 	if (!equal_sign)
 		return ;
@@ -144,13 +144,13 @@ static void update_env(char *key, char *new_var, char *equal_sign)
 
 static int set_env_var(char *arg, int fd)//begins here 1st
 {
-	char *equal_sign;
-	char *key;
-	char *new_var;
+	char	*equal_sign;
+	char	*key;
+	char	*new_var;
 
 	if (init_env_var(arg, &key, &new_var, &equal_sign) < 0)
 		return (1);
-	if (!is_valid_identifier(key))//FIXME seg faults if not valid identifier(ex.: export batata-).
+	if (!is_valid_identifier(key))
 	{
 		free(key);
 		free(new_var);
@@ -163,8 +163,6 @@ static int set_env_var(char *arg, int fd)//begins here 1st
 	return (0);
 }
 
-////////////////////test////////////////////
-
 /**@brief This is the main func to the buil-in export, if it has args it adds them to exported vars, if just "export" prints them all..
  * @param arg An array of strings with the variables to add.
  * @param fd The fd to write to.
@@ -172,7 +170,7 @@ static int set_env_var(char *arg, int fd)//begins here 1st
  */
 void ft_export(char **arg, int fd)
 {
-	int i;
+	int	i;
 
 	msh_inf()->exit_status = 0;
 
@@ -189,4 +187,3 @@ void ft_export(char **arg, int fd)
 		i++;
 	}
 }
-///////when receiving export batata batata1= batata+ it seg faults on the '+'

@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/20 02:16:58 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 22:27:52 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:31:44 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,8 @@ char	*check_valid_command(char *command, t_exec *exec)
 	struct stat	info;//holds information about the file
 
 	valid_path = NULL;
+	if (!command)//if no command is given, exit
+		return(NULL);
 	if (command[0] == '/' || (command[0] == '.' && \
 		(command[1] == '/' || command[1] == '.')))// checks if the command is an absolute (/) or relative path(./ or ../)
 	{
@@ -127,6 +129,7 @@ char	*check_valid_command(char *command, t_exec *exec)
 	return (valid_path);
 }
 
+
 /* @brief This function checks if the command is a builtin or an external 
  * command executing it.
  * @param command The command to be checked.
@@ -137,17 +140,19 @@ void	executor_router(char **command, t_exec *exec)
 	char	*valid_path;
 	char	**env;
 
-	if (!command)//if no command is given, exit
-		ft_exit(NULL, 0);
-	if (bultin_roundabout(command))//if builtin it gets executed and we then return
-		return ;
-	valid_path = check_valid_command(command[0], exec);//checks if the command is a valid path
+	if (!command || !command[0])
+		exit(0); // Handle empty command in child process
+	if (bultin_roundabout(command))
+		return; // Return for built-ins instead of exiting
+	// Handle external commands (in child process)
+	valid_path = check_valid_command(command[0], exec);
+	if (!valid_path)
+		exit(127);
 	env = msh_inf()->env;
-	if (execve(valid_path, command, env) == -1)//if error
+	if (execve(valid_path, command, env) == -1)
 	{
 		perror(valid_path);
 		free(valid_path);
-		free_double_array(env);
-		ft_exit(NULL, 126);
+		exit(126);
 	}
 }

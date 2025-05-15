@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:04:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/03/28 12:19:23 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:25:53 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ void	add_new_env_var(char *arg, char ***env_ptr)
 }
 
 int	handle_invalid_identifier(char *arg, int fd, char *equal_sign)
-{
+{	
+	printf("arg: %s\n", arg);
 	write(fd, "minishell: export: `", 20);
 	write(fd, arg, ft_strlen(arg));
 	write(fd, "': not a valid identifier\n", 26);
-	*equal_sign = '=';
 	return (1);
 }
 

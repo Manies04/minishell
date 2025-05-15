@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/18 11:15:26 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 21:56:05 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/14 13:32:25 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,51 +34,52 @@ int	find_env_index(char **env, const char *token)
 	}
 	return (-1);
 }
-
+static void	remove_from_envexport(int in_env, int in_export)
+{
+	int	i;
+	
+	if (in_env != -1)	// Remove from env if found (e.g., "batta1" matches "batta1=")
+	{
+		free(msh_inf()->env[in_env]);
+		i = in_env;
+		while (msh_inf()->env[i + 1] != NULL)
+		{
+			msh_inf()->env[i] = msh_inf()->env[i + 1];
+			i++;
+		}
+		msh_inf()->env[i] = NULL;
+	}
+	if (in_export != -1)	// Remove from export if found (e.g., "batta1" matches "batta1=")
+	{
+		free(msh_inf()->export[in_export]);
+		i = in_export;
+		while (msh_inf()->export[i + 1] != NULL)
+		{
+			msh_inf()->export[i] = msh_inf()->export[i + 1];
+			i++;
+		}
+		msh_inf()->export[i] = NULL;
+	}
+}
 void	ft_unset(char **token)
 {
-	char **env = msh_inf()->env;		// Access env from structure (only entries with '=')
-	char **export = msh_inf()->export;	// Access export from structure (all entries)
-	int position = 0;
-	int in_env, in_export;
-	int i, ii;
+	int	position;
+	int	in_env;
+	int	in_export;
 
+	position = 0;
 	while (token[++position]) // For every token
 	{
 		// Skip tokens with '=' (e.g., "batta1=", "batata2=yes")
 		if (ft_strchr(token[position], '=') != NULL)
 			continue;
 
-		in_env = find_env_index(env, token[position]);    // Check env
-		in_export = find_env_index(export, token[position]); // Check export
+		in_env = find_env_index(msh_inf()->env, token[position]);    // Check env
+		in_export = find_env_index(msh_inf()->export, token[position]); // Check export
 
 		if (in_env == -1 && in_export == -1)
 			continue; // Token not found, skip to next token
-
-		// Remove from env if found (e.g., "batta1" matches "batta1=")
-		if (in_env != -1)
-		{
-			free(env[in_env]);
-			i = in_env;
-			while (env[i + 1] != NULL)
-			{
-				env[i] = env[i + 1];
-				i++;
-			}
-			env[i] = NULL;
-		}
-
-		// Remove from export if found (e.g., "batta1" matches "batta1=")
-		if (in_export != -1)
-		{
-			free(export[in_export]);
-			ii = in_export;
-			while (export[ii + 1] != NULL)
-			{
-				export[ii] = export[ii + 1];
-				ii++;
-			}
-			export[ii] = NULL;
-		}
+		if (in_env != -1 || in_export != -1)
+			remove_from_envexport(in_env, in_export); // Remove from env and export
 	}
 }

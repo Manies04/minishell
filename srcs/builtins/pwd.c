@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 12:39:26 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 21:54:58 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:26:52 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@ void	ft_pwd(int fd)
 
 	pwd = NULL;
 	pwd = getcwd(NULL, 0);//get current working driver
-	if (!pwd)//if not found get the last known wd
-		pwd = ft_strdup(msh_inf() ->pwd);
 	if (pwd != NULL)
 	{
 		write(fd, pwd, ft_strlen(pwd));
@@ -34,22 +32,6 @@ void	ft_pwd(int fd)
 	{
 		perror("!!!ERROR!!! PWD");
 		msh_inf()->exit_status = 1;
-	}
-}
-
-/**@brief This function updates the current working directory in the shell info structure.
- * @return Void.
- */
-void	pwd_updater(void)//is it really needed?
-{
-	char	*pwd;
-
-	pwd = NULL;
-	pwd = getcwd(NULL, 0);//get current working driver
-	if (pwd)
-	{
-		free(msh_inf() -> pwd);//clear previous wd
-		msh_inf() -> pwd = pwd;//updates that position
 	}
 }
 
@@ -174,7 +156,6 @@ void	ft_cd(char **cmd, int fd)
 	}
 	ft_strlcpy(env_var, "PWD=", sizeof(env_var));//Copies "PWD=" into env_var.
 	ft_strlcat(env_var, wd, sizeof(env_var));
-	//update_pwd (is it really needed?)
 	ft_export((char *[]){"export", env_var, NULL}, fd);//updates PWD on export/env.
 	msh_inf()->exit_status = 0;
 }

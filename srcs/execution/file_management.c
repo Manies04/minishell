@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 00:22:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 23:27:16 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:09:41 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 		close(fd);
 		exit_executor(exec, 1);
 	}
-	expand_heredoc(&str);//FIXME think it's done(bellow func works) expands the environment variables in the heredoc input
+	expand_heredoc(&str);//expands the environment variables in the heredoc input
 	write(fd, str, ft_strlen(str));//writes the heredoc input to the temp file
 	close(fd);
 	free(str);

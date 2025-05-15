@@ -6,14 +6,14 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:49:34 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/04 17:03:33 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:33:35 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	cpy_env(char **env)//copies env end a cpy to use in export
-{
+void	cpy_env(char **env)
+{//copies env and a cpy to use in export
 	int	c;
 
 	c = 0;
@@ -28,20 +28,9 @@ static void	cpy_env(char **env)//copies env end a cpy to use in export
 	c = -1;
 	while (env[++c])
 	{
-		msh_inf()->env[c] = ft_strdup(env[c]);
-		msh_inf()->export[c] = ft_strdup(env[c]);
+		msh_inf()->env[c] = ft_strdup(env[c]);//leaks
+		msh_inf()->export[c] = ft_strdup(env[c]);//leaks
 	}
-}
-
-
-//initiation of variables
-void	minishell_init(char **env)
-{
-	t_msh	*msh;//main struct
-	
-	msh = msh_inf();
-	msh->pwd = getcwd(NULL, 0);
-	cpy_env(env);
 }
 
 t_msh	*msh_inf(void)

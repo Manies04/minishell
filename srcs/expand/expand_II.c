@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 23:34:20 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/07 02:00:12 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:21:02 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
  * @param str The string to handle
  * @return 0 on success
  */
-static int	handle_quoted_expansion(char *str)
-{//FIXME cant it be void?
+static void	handle_quoted_expansion(char *str)
+{
 	int	i;
 
 	i = 0;
@@ -42,7 +42,6 @@ static int	handle_quoted_expansion(char *str)
 		}
 		i++;
 	}
-	return (0);
 }
 
 /**@brief This function finds the first string needing expansion.

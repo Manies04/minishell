@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:53:29 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/07 01:39:39 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:25:46 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ typedef struct s_msh
 {
 	char		*input;			// Stores the input to minishell so it can be parsed after ⤵ //beta
 	char		**command;		// Stores parsed command arguments <------------------------ //beta
-	char		*pwd;			// Stores the current working directory
 	int			exit_status;	// Stores the last command's exit status
 	char		**env;			// Stores environment variables
 	char		**export;		// Stores environment variables to use in export 
@@ -71,8 +70,8 @@ typedef struct s_msh
 }		t_msh;
 
 /* ------------------INIT------------------- */
-void	minishell_init(char **env);
 t_msh	*msh_inf(void);
+void	cpy_env(char **env);
 
 /* ------------------BUILT-INS------------------- */
 void	add_new_env_var(char *arg, char ***env_ptr);
@@ -97,14 +96,11 @@ void	sig_for_heredoc(int sig);
 void	executor(t_commands **commands);
 
 /* ------------------EXPANSION------------------- */
-char	*expand_env_vars(const char *str);
 void	expand_heredoc(char **str);
 char	**expander(char **str);
 
 /* ------------------HELPERS------------------- */
 void	free_array(char **args);
-void	free_structs(void);
-void	clean_all(void);
 void	free_double_array(char **array);
 void	init_fds(int (*fd1)[2], int (*fd2)[2]);
 void	close_fd(int fd);
@@ -156,5 +152,5 @@ char		*ft_strndup(char const *s1, unsigned int n);
 // "\6\6" = >> = APPEND
 // '\7' = < = LESS
 // "/7/7" = << = HEREDOC
-// '\10' = $ = DOLLAR
+
 #endif

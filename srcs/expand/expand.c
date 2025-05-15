@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:46:45 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/07 01:45:10 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:18:52 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ char	*add_expansion(char **str, char *add, int size)
 static char	*expand_special(char *str)
 {
 	if (str[0] == '?')//$?
-		return (ft_itoa(msh_inf()->exit_status / 256));
+		return (ft_itoa(msh_inf()->exit_status));
 	if (str[0] == '$')//$$
 		return (ft_itoa(msh_inf()->pid));
 	return (ft_strdup(""));
@@ -139,70 +139,101 @@ char	*expand_var(char *str)
 	return (ft_strdup(""));//if not found, return empty string
 }
 
-/**@brief This function replaces all \10 with $ in the string.
- * @param str The string to manipulate
- * @return Void
+/**@brief Copies text before '$' and updates the result string.
+ * @param result The result string
+ * @param temp Input string
+ * @param i Index of '$' or end of string
+ * @return Updated result string
  */
-void	marker_to_dollar(char *str)
+static char	*copy_before_dollar(char *result, char *temp, int i)
 {
-	int	i;
+	char	*before;
+	char	*new_result;
 
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '\10')
-			str[i] = '$';
-		i++;
-	}
+	before = ft_strndup(temp, i);
+	new_result = ft_strjoin(result, before, 0);
+	free(result);
+	free(before);
+	return (new_result);
 }
 
-/**@brief This function expands the heredoc string by replacing all variables with their values and the reverts the marker \10 to $.
- * @param str The string to manipulate
+/**@brief Handles variable expansion and updates result string.
+ * @param result Current result string
+ * @param temp Input string
+ * @param i Index after '$'
+ * @return Updated result string
+ */
+static char	*expand_variable(char *result, char *temp, int *i)
+{
+	char	*var_name;
+	char	*var_value;
+	char	*new_result;
+
+	var_name = get_var_name(temp + *i);
+	if (!var_name || var_name[0] == '\0')
+	{
+		free(var_name);
+		new_result = ft_strjoin(result, "$", 0);
+		*i += 1;
+	}
+	else
+	{
+		var_value = expand_var(var_name);
+		new_result = ft_strjoin(result, var_value, 0);
+		*i += 1 + ft_strlen(var_name);
+		free(var_value);
+		free(var_name);
+	}
+	free(result);
+	return (new_result);
+}
+
+/**@brief Appends remaining text after last variable to result.
+ * @param result Current result string
+ * @param temp Input string
+ * @return Updated result string
+ */
+static char	*append_remaining(char *result, char *temp)
+{
+	char	*remaining;
+	char	*new_result;
+
+	remaining = ft_strdup(temp);
+	new_result = ft_strjoin(result, remaining, 0);
+	free(result);
+	free(remaining);
+	return (new_result);
+}
+
+/**@brief Expands all variables (starting with $) in a heredoc input string.
+ * @param str Pointer to the input string (will be modified)
  * @return Void
  */
 void	expand_heredoc(char **str)
 {
-	char	*expanded;
-
-	expanded = expand_env_vars(*str);//expand the string
-	marker_to_dollar(expanded);//replace \10 with $
-	free(*str);
-	*str = expanded;
-}
-
-/**@brief Expands environment variables in a string, skipping single-quoted 
- * sections.
- * @param str The string to expand
- * @return Expanded string
- */
-char	*expand_env_vars(const char *str)
-{
+	char	*input;
 	char	*result;
-	char	*var_name;
-	char	*var_value;
 	char	*temp;
 	int		i;
+	input = *str;
+	result = ft_strdup("");
+	temp = input;
 
-	i = 0;
-	result = ft_strdup(str);
-	while (result[i])//loop through the string
+	i = -1;
+	if (!input || !result)
+		return ;
+	while (temp[++i])
 	{
-		if (result[i++] == '\5') // Skip single-quoted sections
-			while (result[i] && result[i] != '\5')
-				i++;
-		else if (result[i] == '$' && result[i + 1] && !is_whitespace(result[i + 1]))//if a $ is found and the next char is not a white space
+		if (temp[i] == '$')
 		{
-			var_name = get_var_name(result + i); // Extract variable name
-			var_value = expand_var(var_name); // Get value
-			temp = result;
-			result = add_expansion(&temp, var_value, ft_strlen(var_name)); // Replace variable with value
-			free(temp);
-			free(var_name);
-			free(var_value);
-			i = 0; // Restart to check for more expansions
+			result = copy_before_dollar(result, temp, i);
+			result = expand_variable(result, temp, &i);
+			temp += i;
+			i = 0;
 		}
-		else
-			i++;//move to the next char
 	}
-	return (result);
+	if (i > 0)
+		result = append_remaining(result, temp);
+	free(*str);
+	*str = result;
 }

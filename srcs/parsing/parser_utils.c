@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 16:08:27 by joaoleote         #+#    #+#             */
-/*   Updated: 2025/04/30 17:19:31 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/08 23:27:46 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	free_commands(t_commands *stack)
 {
 	t_commands	*current; //points to the current node
-	t_commands	*temp; //is to keep the next node before frees the current
+	t_commands	*temp; //is to keep the next node before it frees the current
 
 	current = stack; //initializes current with the 1st element of the list
 	while (current)

@@ -6,23 +6,19 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 22:33:39 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/26 23:54:04 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/15 17:30:47 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-/* @brief Closes the file descriptors if they are not set to -1 or -2.
- * @param fd The file descriptor array to close.
- * @return Void.
- */
-void	close_pipe_ends(int *fd)
+void close_pipe_ends(int *fd)
 {
 	if (fd)
 	{
-		if (fd && fd[0] != -1 && fd[0] != -2)
+		if (fd[0] >= 0)
 			close(fd[0]);
-		if (fd && fd[1] != -1 && fd[1] != -2)
+		if (fd[1] >= 0)
 			close(fd[1]);
 	}
 }

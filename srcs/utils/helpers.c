@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 23:58:35 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/02 13:50:56 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/14 12:54:05 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,15 @@ int	is_whitespace(int c)
 	return (0);
 }
 
-void	redirect_error(char *file)//FIXME
+void	redirect_error(char *file)
 {
 	if (!ft_strcmp(file, "./\2/\2"))
-		print_error("", "ambiguos redirect\n");
+		print_error("", "too vague of a redirect\n");
 	else
 		print_error(file, ": No such file or directory\n");
 }
 
-void	print_error(char *value, char *message)//FIXME
+void	print_error(char *value, char *message)
 {
 	write(STDERR_FILENO, value, ft_strlen(value));
 	write(STDERR_FILENO, message, ft_strlen(message));
