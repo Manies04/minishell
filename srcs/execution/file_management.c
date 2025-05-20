@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 00:22:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/08 19:09:41 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:42:10 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,12 +124,12 @@ int	input_redirect(t_commands *current, t_exec *exec)
 	while (current->infiles && current->infiles[++i] && input != -2)//ensures there are input files and checks if the input file at position[i] is valid, and if there is no problem opening it.
 	{
 		close_fd(input);//ensures only one file is open at a time.
-		input = open(current->infiles[i], O_RDONLY, 0777);//open in read only mode, is 0777 really neded?
+		input = open(current->infiles[i], O_RDONLY, 0777);//open in read only mode
 		if (input == -1)//open failed
 			input = -2;//flag to indicate that the file was not opened successfully and end the loop.
 	}
 	if (input == -2)
-		redirect_error(current->infiles[i - 1]);// passes the last working file to the error function. ///////////////////////////////////////why??
+		redirect_error(current->infiles[i - 1]);// passes the name of the file that failed to open.
 	if (!ft_strcmp(current->input, "\7\7") && input != -2)// if the less than is a heredoc, and the input file was opened successfully.
 		return (close_fd(input), heredoc);//close the input file and return the heredoc file descriptor.
 	return (close_fd(heredoc), input);//close the heredoc file and return the input file descriptor.

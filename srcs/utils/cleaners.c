@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 11:02:47 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:15:26 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/19 22:40:36 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@ void	free_array(char **args)
 {
 	int	i;
 
-	i = 0;
+	i = -1;
 	if (!args)
 		return ;
-	while (args[i])
-		free(args[i++]);
+	while (args[++i])
+	{
+		free(args[i]);
+		args[i] = NULL;
+	}
 	free(args);
 }
 

@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:53:29 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:37:37 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:05:56 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,6 @@ typedef struct s_exec
 //minishell geral struct
 typedef struct s_msh
 {
-	char		*input;			// Stores the input to minishell so it can be parsed after ⤵ //beta
-	char		**command;		// Stores parsed command arguments <------------------------ //beta
 	int			exit_status;	// Stores the last command's exit status
 	char		**env;			// Stores environment variables
 	char		**export;		// Stores environment variables to use in export 
@@ -72,6 +70,7 @@ typedef struct s_msh
 /* ------------------INIT------------------- */
 t_msh	*msh_inf(void);
 void	cpy_env(char **env);
+void	init_vars(int *a, int *b, int *c);
 
 /* ------------------BUILT-INS------------------- */
 void	add_new_env_var(char *arg, char ***env_ptr);
@@ -107,12 +106,11 @@ void	close_fd(int fd);
 void	signal_handler_child(int sig);
 int		is_valid_identifier(char *str);
 char	*check_valid_command(char *command, t_exec *exec);
-int		handle_invalid_identifier(char *arg, int fd, char *equal_sign);
+int		handle_invalid_identifier(char *arg, int fd);
 void	signal_handler_main(int sig);
 void	exit_executor(t_exec *exec, int exit_status);
 void	redirect_error(char *file);
 void	print_error(char *value, char *message);
-void	redirect_error(char *file);
 
 /* ------------------PARSER------------------- */
 int			is_redirection(char *str);

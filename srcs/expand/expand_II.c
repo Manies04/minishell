@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 23:34:20 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:21:02 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:30:59 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,9 +146,7 @@ char	**split_by_spaces(char **strs, int index)
 	int		j;
 	int		k;
 
-	c = 0;
-	j = 0;
-	k = 0;
+	init_vars(&c, &j, &k);//initialize the variables
 	tmp = ft_cp_double_str(strs);//copies the original array to tmp
 	add = ft_split(tmp[index], ' ');//splits the string at the index by spaces
 	free(strs);
@@ -197,6 +195,34 @@ char	**rm_empty_str(char **strs)
 	free(temp);
 	return (strs);
 }
+/**@brief This function removes all \4 and \5 from the string and replaces \1 
+ * with $.
+ * @param dst The destination string
+ * @param src The source string
+ * @return Void.
+ */
+static void	markers_handler(char *dst, char *src)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (src[j])
+	{
+		if (src[j] == '\4' || src[j] == '\5')
+			j++;
+		else
+		{
+			if (src[j] == '\1')
+				dst[i++] = '$';
+			else
+				dst[i++] = src[j];
+			j++;
+		}
+	}
+	dst[i] = '\0';
+}
 
 /**@brief This function removes all \4 and \5 from the string and replaces \1 
  * with $.
@@ -205,31 +231,17 @@ char	**rm_empty_str(char **strs)
  */
 static void	edit_str(char **str)
 {
-	char *temp;
-	int i = 0, j = 0;
+	char	*temp;
 
 	temp = ft_strdup(*str);
 	free(*str);
 	*str = malloc(sizeof(char) * (ft_strlen(temp) + 1));
-	if (!*str)//allocation failed
+	if (!*str)
 	{
 		free(temp);
 		return;
 	}
-	while (temp[j])//loops through the str char by char
-	{
-		if (temp[j] == '\4' || temp[j] == '\5')//if a marker, skip it
-		{
-			j++;
-			continue;
-		}
-		else if (temp[j] == '\1')//if \1, replace it with $
-			(*str)[i++] = '$';
-		else
-			(*str)[i++] = temp[j];//copy the char
-		j++;
-	}
-	(*str)[i] = '\0';
+	markers_handler(*str, temp);
 	free(temp);
 }
 

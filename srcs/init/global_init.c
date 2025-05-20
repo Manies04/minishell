@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:49:34 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:33:35 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 18:40:24 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	cpy_env(char **env)
 t_msh	*msh_inf(void)
 {
 	static	t_msh	msh;//static initializes everything insite the struct to 0 once
-	
 	return (&msh);
 }
 
@@ -55,3 +54,14 @@ void	read_input(char *input)
 	free_commands(msh_inf()->commands);
 	msh_inf()->commands = NULL;
 }
+void	init_vars(int *a, int *b, int *c)
+{
+	if (a)
+		*a = 0;
+	if (b)
+		*b = 0;
+	if (c)
+		*c = 0;
+}
+
+

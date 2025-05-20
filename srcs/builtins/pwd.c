@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 12:39:26 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:26:52 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 22:32:47 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void	ft_echo(char **cmd, int fd)
 	}
 	if (!nflag)//if no flag, new line
 		write(fd, "\n", 1);
+	msh_inf()->exit_status = 0;
 }
 
 /**@brief This function is used to retrieve the VALUE of an env variable (whats after '=')

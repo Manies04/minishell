@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:11:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/14 13:11:29 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 11:23:50 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,8 @@ static void	update_env(char *key, char *new_var, char *equal_sign)
 		add_new_env_var(new_var, &msh_inf()->env);
 }
 
-static int set_env_var(char *arg, int fd)//begins here 1st
-{
+static int set_env_var(char *arg, int fd)
+{//begins here 1st
 	char	*equal_sign;
 	char	*key;
 	char	*new_var;
@@ -154,7 +154,7 @@ static int set_env_var(char *arg, int fd)//begins here 1st
 	{
 		free(key);
 		free(new_var);
-		return (handle_invalid_identifier(arg, fd, equal_sign));
+		return (handle_invalid_identifier(arg, fd));
 	}
 	update_export(key, new_var, equal_sign);
 	update_env(key, new_var, equal_sign);

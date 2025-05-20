@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 14:05:19 by joaoleote         #+#    #+#             */
-/*   Updated: 2025/04/30 17:25:04 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 11:53:42 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,8 @@ static int	verify_redirections(char *new)
 	splitted = ft_split(new, '\2'); //Uses ft_split to split the new str using Spaces as delimiter
 	while (splitted[i]) //while splitted exists
 	{
-		if (is_redirection(splitted[i]) && \
-				!splitted[i + 1] || \
-				(is_redirection(splitted[i]) && \
-				is_redirection(splitted[i + 1]))) //if theres any redirection and there isnt a next argument is error, and if theres two redirections in a row
+		if ((is_redirection(splitted[i]) && !splitted[i + 1]) || \
+			(is_redirection(splitted[i]) && is_redirection(splitted[i + 1]))) //if theres any redirection and there isnt a next argument is error, and if theres two redirections in a row
 			return (free_double_array(splitted), 0); //returns 0 to show error and frees the memory
 		i++;
 	}

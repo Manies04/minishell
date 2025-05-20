@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 15:46:45 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:18:52 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 19:30:16 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,30 @@ char	*get_var_name(char *str)
 	return (sendable);
 }
 
+static void	fill_expansion(char *result, char *temp, char *add, int size)
+{
+	int	i;
+	int	j;
+	int	k;
+
+	init_vars(&i, &j, &k);//initialize i, j and k to 0
+	while (temp[k] && temp[k] != '$')//copy chars until the first $
+		result[i++] = temp[k++];
+	if (temp[k] == '$')//'$' is found
+	{
+		k++;// Skip the '$'
+		if (temp[k] && ((temp[k] >= '0' && temp[k] <= '9') || temp[k] == '?' || temp[k] == '$'))//if the next char is a special case
+			k++;// Skip the special case
+		else
+			k += size;// Skip variable name
+	}
+	while (add[j])
+		result[i++] = add[j++];//copy the expanded value into result
+	while (temp[k])
+		result[i++] = temp[k++];//copy the rest of the str(temp), after the variable already in result
+	result[i] = '\0';
+}
+
 /**@brief This function replaces a variable (starting with $) in a string with 
  * its expanded value
  * @param str The string to manipulate
@@ -64,34 +88,14 @@ char	*add_expansion(char **str, char *add, int size)
 {
 	char	*temp;
 	char	*result;
-	int		i;
-	int		j;
-	int		k;
 
-	i = 0;
-	j = 0;
-	k = 0;
 	temp = *str;
 	if (!temp || !add)
 		return (NULL);
 	result = malloc(sizeof(char) * (ft_strlen(temp) + ft_strlen(add) + 1));// allocate memory for the new string
 	if (!result)//allocation failed
 		return (NULL);
-	while (temp[k] && temp[k] != '$')//copy chars until the first $
-		result[i++] = temp[k++];
-	if (temp[k] == '$')//'$' is found
-	{
-		k++; // Skip the '$'
-		if (temp[k] && ((temp[k] >= '0' && temp[k] <= '9') || temp[k] == '?' || temp[k] == '$'))//if the next char is a special case
-			k++; // Skip the special case
-		else
-			k += size; // Skip variable name
-	}
-	while (add[j])
-		result[i++] = add[j++];//copy the expanded value into result
-	while (temp[k])
-		result[i++] = temp[k++];//copy the rest of the str(temp), after the variable already in result
-	result[i] = '\0';
+	fill_expansion(result, temp, add, size);//fill the result string with the expanded value
 	free(temp);
 	*str = result;//update the pointer
 	return (result);

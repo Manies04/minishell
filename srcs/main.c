@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 10:34:14 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/14 12:54:44 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 14:28:01 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,5 @@ int	main(int ac, char **av, char **envp)
 		if (*input)
 			read_input(input);
 	}
+	return (0);
 }
-
-//gcc -o minishell srcs/*.c srcs/builtins/*.c srcs/init/*.c srcs/utils/*.c srcs/expand/*.c srcs/execution/*.c srcs/parsing/*.c inc/Libft/libft.a -lreadline

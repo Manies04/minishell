@@ -6,19 +6,25 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 13:46:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/15 17:15:06 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:50:10 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	exitwcode(int exit_code)//FIXME is only this to free?
+static void	exitwcode(int exit_code)
 {
 	if (msh_inf()->env)
+	{
 		free_array(msh_inf()->env);
+		msh_inf()->env = NULL;
+	}
 	if (msh_inf()->export)
+	{
 		free_array(msh_inf()->export);
-	if (msh_inf()->commands)
+		msh_inf()->export = NULL;
+	}
+		if (msh_inf()->commands)
 		free_commands(msh_inf()->commands); // Free commands
 	rl_clear_history(); // Clear readline history
 	exit(exit_code);
