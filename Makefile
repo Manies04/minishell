@@ -6,7 +6,7 @@
 #    By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/25 12:58:33 by tiade-al          #+#    #+#              #
-#    Updated: 2025/05/20 14:09:24 by tiade-al         ###   ########.fr        #
+#    Updated: 2025/05/21 01:41:32 by tiade-al         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ CYAN = \033[36m
 # Source files (explicitly listed to replace dynamic find)
 SRCS = srcs/main.c \
 	srcs/signals.c \
+	srcs/builtins/env_II.c \
 	srcs/builtins/env.c \
 	srcs/builtins/exit.c \
 	srcs/builtins/export_I.c \
@@ -35,6 +36,7 @@ SRCS = srcs/main.c \
 	srcs/execution/roundabout.c \
 	srcs/expand/expand.c \
 	srcs/expand/expand_II.c \
+	srcs/expand/expand_III.c \
 	srcs/init/global_init.c \
 	srcs/parsing/find_errors.c \
 	srcs/parsing/lexer.c \

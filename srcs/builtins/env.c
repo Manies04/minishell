@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:17:30 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/04/27 14:21:28 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 02:04:03 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static void	arg_handle(char **arg, int fd)
 	write(fd, "env: '", 6);
 	write(fd, arg[1], ft_strlen(arg[1]));
 	write(fd, "': No such file or directory\n", 30);
-	msh_inf()->exit_status = 127;//If a command is not found, the child process created to execute it returns a status of 127
+	msh_inf()->exit_status = 127;
 }
 
 /**@brief This function prints out the environment variable.
@@ -31,7 +31,7 @@ static void	arg_handle(char **arg, int fd)
  */
 static void	print_env(char *str)
 {
-	write(1, str, ft_strlen(str)); // Print the full string (e.g., "batata=" or "batata")
+	write(1, str, ft_strlen(str));
 	write(1, "\n", 1);
 }
 
@@ -45,17 +45,17 @@ void	ft_env(char **arg, int fd)
 	char	**env;
 
 	env = msh_inf()->env;
-	if (!env) // If env is empty
+	if (!env)
 	{
 		msh_inf()->exit_status = 1;
-		return;
+		return ;
 	}
-	if (arg[1]) // It's not supposed to be more than "env"
+	if (arg[1])
 	{
-		arg_handle(arg, fd);//error handling
-		return;
+		arg_handle(arg, fd);
+		return ;
 	}
-	while (*env) // Print all env vars
+	while (*env)
 		print_env(*env++);
 	msh_inf()->exit_status = 0;
 }
@@ -78,9 +78,17 @@ int	is_builtin(char **command)
 		return (1);
 	return (0);
 }
-/*
-env is a builtin command that prints the current environment variables and
-only takes one argument, which is the name of the variable to print. If no
-arguments are given, it prints all environment variables. If an invalid 
-argument is given, it prints an error message and sets the exit status to 127.
-*/
+
+/**@brief This function counts the number of strs in the array.
+ * @param strs The array of strings to count
+ * @return The number of strings in the array
+ */
+int	count_strs(char **strs)
+{
+	int	i;
+
+	i = 0;
+	while (strs[i])
+		i++;
+	return (i);
+}

@@ -6,23 +6,24 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 15:54:50 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/20 22:05:57 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 01:50:53 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
-/**@brief This function
- * @param fd A pointer to the file descriptors to be initialized.
- * @param current A pointer to the current command.
- * @param exec A pointer to the execution structure.
- * @return Void.
+/**@brief Checks and executes specific built-in commands that can run without 
+ * forking if there's no pipeline.
+ * @param current Structure containing the command data, including the command 
+ * array.
+ * @param exec Structure with execution variables, including file descriptors
+ *  for redirection.
+ * @return 1 if a built-in command was executed, 0 otherwise.
  */
 static int	do_multable_builtin(t_commands *current, t_exec *exec)
 {
 	if (!current->command)
-		return (0);//export batata stays only in 1 command so the next command is NULL, for it to have 2 commands it would have to have pipes (|), redirections (>).
+		return (0);
 	if (!current->next && \
 		(!ft_strcmp(current->command[0], "exit") || \
 		!ft_strcmp(current->command[0], "export") || \
@@ -39,25 +40,15 @@ static int	do_multable_builtin(t_commands *current, t_exec *exec)
 		return (0);
 }
 
-static int	check_errors(t_exec *exec, int i)
-{
-	if (msh_inf()->quit)
-		return (exit_executor(exec, -1), 1);
-	exec->pids[i] = fork();
-	if (exec->pids[i] < 0)
-		exit_executor(exec, 1);
-	return (0);
-}
-
-static void	redirect_io(int file, int std)
-{
-	if (file != -1)
-	{
-		dup2(file, std);
-		close(file);
-	}
-}
-
+/**@brief Executes a command in a child process, handling redirections and 
+ * pipes.
+ * @param current Structure containing the command data, including the command
+ *  array.
+ * @param exec Structure with execution variables, including file descriptors 
+ * for pipes and redirections.
+ * @return Void. Exits the child process with the global exit status or a 
+ * specific error code.
+ */
 static void	child_routine(t_commands *current, t_exec *exec)
 {
 	if (exec->files[0] == -2 || exec->files[1] == -2)
@@ -76,6 +67,15 @@ static void	child_routine(t_commands *current, t_exec *exec)
 	exit(msh_inf()->exit_status);
 }
 
+/**@brief Processes and forks commands, setting up pipes and redirections for 
+ * execution.
+ * @param current Structure containing the command data, including the command 
+ * array.
+ * @param exec Structure with execution variables, including process IDs and 
+ * file descriptors.
+ * @return 1 if commands are executed successfully, 0 if an error occurs (e.g.,
+ *  pipe or fork failure).
+ */
 static int	do_commands(t_commands *current, t_exec *exec)
 {
 	int	i;
@@ -103,6 +103,14 @@ static int	do_commands(t_commands *current, t_exec *exec)
 	return (close_pipe_ends(exec->next_fd), 1);
 }
 
+/**@brief Waits for child processes to complete and updates the global exit 
+ * status.
+ * @param exec Structure with execution variables, including the array of 
+ * process IDs.
+ * @param num_commands The number of commands (and child processes) to wait
+ *  for.
+ * @return Void.
+ */
 static void	wait_for_children(t_exec *exec, int num_commands)
 {
 	int	i;
@@ -122,8 +130,9 @@ static void	wait_for_children(t_exec *exec, int num_commands)
 	}
 }
 
-/**@brief This is the main function to execute the commands.
- * @param commands A pointer to the commands to be executed.
+/**@brief Main function to execute commands, handling built-ins and forking for
+ *  external commands.
+ * @param commands A pointer to the linked list of commands to be executed.
  * @return Void.
  */
 void	executor(t_commands **commands)
@@ -133,17 +142,17 @@ void	executor(t_commands **commands)
 
 	current = *commands;
 	if (do_multable_builtin(current, &exec))
-		return;
+		return ;
 	exec.pids = malloc(sizeof(int) * msh_inf()->num_of_commands);
 	if (!exec.pids)
-		return;
+		return ;
 	init_fds(&exec.fd, &exec.files);
 	exec.next_fd[0] = -1;
 	exec.next_fd[1] = -1;
 	if (!do_commands(current, &exec))
 	{
 		free(exec.pids);
-		return;
+		return ;
 	}
 	wait_for_children(&exec, msh_inf()->num_of_commands);
 	free(exec.pids);

@@ -6,19 +6,23 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 15:04:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/20 11:23:42 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 01:56:01 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-//helper funcs
-
+/**@brief This function adds a new environment variable to the environment 
+ * array.
+ * @param arg The new environment variable to add.
+ * @param env_ptr Pointer to the environment array.
+ * @return Void.
+ */
 void	add_new_env_var(char *arg, char ***env_ptr)
 {
-	char **env;
-	char **new_env;
-	int i;
+	char	**env;
+	char	**new_env;
+	int		i;
 
 	env = *env_ptr;
 	i = 0;
@@ -37,8 +41,13 @@ void	add_new_env_var(char *arg, char ***env_ptr)
 	*env_ptr = new_env;
 }
 
+/**@brief This function handles invalid identifiers for export.
+ * @param arg The invalid identifier.
+ * @param fd The file descriptor to write to.
+ * @return 1 if the identifier is invalid.
+ */
 int	handle_invalid_identifier(char *arg, int fd)
-{	
+{
 	printf("arg: %s\n", arg);
 	write(fd, "minishell: export: `", 20);
 	write(fd, arg, ft_strlen(arg));
@@ -63,18 +72,19 @@ void	copy_env_array(char **env, char **env_copy, int count)
 		if (!env_copy[i])
 		{
 			free_array(env_copy);
-			return;
+			return ;
 		}
 		i++;
 	}
 }
 
-/**@brief This function prints to the terminal the exported variables as they are suppose to be displayed.
+/**@brief This function prints to the terminal the exported variables as they
+ *  are suppose to be displayed.
  * @param env_copy Used to keep the copy of env.
  * @param fd The fd to write to.
  * @return Void.
  */
-void print_sorted_env(char **env_copy, int fd)
+void	print_sorted_env(char **env_copy, int fd)
 {
 	int		i;
 	char	*equal_sign;
@@ -84,21 +94,25 @@ void print_sorted_env(char **env_copy, int fd)
 	{
 		write(fd, "declare -x ", 11);
 		equal_sign = ft_strchr(env_copy[i], '=');
-		if (!equal_sign) // No '='
-			write(fd, env_copy[i], ft_strlen(env_copy[i]));//writes it plain
-		else // Has '='
+		if (!equal_sign)
+			write(fd, env_copy[i], ft_strlen(env_copy[i]));
+		else
 		{
-			write(fd, env_copy[i], equal_sign - env_copy[i]); // "Key". Subtracting env_copy[i] (the start of the string) from equal_sign gives the length of the key.
-			write(fd, "=\"", 2); // '= and opening quote
-			write(fd, equal_sign + 1, ft_strlen(equal_sign + 1)); // "Value". str_len of what after "="
-			write(fd, "\"", 1); // Closing quote
+			write(fd, env_copy[i], equal_sign - env_copy[i]);
+			write(fd, "=\"", 2);
+			write(fd, equal_sign + 1, ft_strlen(equal_sign + 1));
+			write(fd, "\"", 1);
 		}
 		write(fd, "\n", 1);
 		i++;
 	}
 }
 
-// Validate variable name (must start with letter or underscore)
+/**@brief This function checks if a string starts with a letter or underscore 
+ * and if encounters '=' it stops.
+ * @param str The string to check.
+ * @return 1 if valid, 0 otherwise.
+ */
 int	is_valid_identifier(char *str)
 {
 	if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))

@@ -6,42 +6,11 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 11:11:22 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/20 11:23:50 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 01:59:06 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-//there is no "" after =
-
-/**@brief This function uses Bubble sort implementation for sorting the cpy of env array
- * @param env The copy of env.
- * @param size The end of the list.
- * @return Void.
- */
-static void	sort_env(char **env, int size)
-{
-	int		i;
-	int		j;
-	char	*temp;
-
-	i = 0;
-	while (i < size - 1)
-	{
-		j = 0;
-		while (j < size - i - 1)
-		{
-			if (ft_strcmp(env[j], env[j + 1]) > 0)
-			{
-				temp = env[j];
-				env[j] = env[j + 1];
-				env[j + 1] = temp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
 
 /**@brief This function prints all the exported variables in "declare -x" 
  * format and sorted.
@@ -51,65 +20,29 @@ static void	sort_env(char **env, int size)
  */
 static void	print_export(char **env, int fd)
 {
-	int count;//keeps track of how many variables there are
-	char **env_copy;//a to be copy of the variables
+	int		count;
+	char	**env_copy;
 
 	count = 0;
 	while (env[count])
 		count++;
-	env_copy = ft_calloc(sizeof(char *), count + 1);//allocating memory
+	env_copy = ft_calloc(sizeof(char *), count + 1);
 	if (!env_copy)
-		return;
-	copy_env_array(env, env_copy, count);//creates a dup of the list
-	sort_env(env_copy, count);//Bubble sort the cpy
-	print_sorted_env(env_copy, fd);// prints 
+		return ;
+	copy_env_array(env, env_copy, count);
+	sort_env(env_copy, count);
+	print_sorted_env(env_copy, fd);
 	free_array(env_copy);
 }
 
-// Find index of an environment variable by key
-static int env_find(char *key, char **env)
-{
-	int i = 0;
-	int len = ft_strlen(key);
-
-	while (env[i])
-	{
-		// Match key up to its length, followed by '=' or end of string
-		if (ft_strncmp(env[i], key, len) == 0 && (env[i][len] == '=' || env[i][len] == '\0'))
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-/* Sets key and new_var based on arg */
-static int	init_env_var(char *arg, char **key, char **new_var, char **equal_sign)
-{
-	*equal_sign = ft_strchr(arg, '=');
-	if (*equal_sign)
-	{
-		*key = ft_substr(arg, 0, *equal_sign - arg);
-		if (!*key)
-			return (-1);
-		*new_var = ft_strdup(arg);
-	}
-	else
-	{
-		*key = ft_strdup(arg);
-		if (!*key)
-			return (-1);
-		*new_var = ft_strdup(arg);
-	}
-	if (!*new_var)
-	{
-		free(*key);
-		return (-1);
-	}
-	return (0);
-}
-
-/* Updates export array with downgrade protection */
-static void	update_export(char *key, char *new_var, char *equal_sign)
+/**@brief Updates the export array with a new variable, with downgrade 
+ * protection.
+ * @param key The variable key to update or add.
+ * @param new_var The full variable string (key or key=value).
+ * @param equal_sign Pointer to the '=' character in new_var, or NULL if absent.
+ * @return Void.
+ */
+void	update_export(char *key, char *new_var, char *equal_sign)
 {
 	int	index;
 
@@ -125,65 +58,52 @@ static void	update_export(char *key, char *new_var, char *equal_sign)
 		add_new_env_var(new_var, &msh_inf()->export);
 }
 
-/* Updates env array if '=' is present */
-static void	update_env(char *key, char *new_var, char *equal_sign)
-{
-	int	index;
-
-	if (!equal_sign)
-		return ;
-	index = env_find(key, msh_inf()->env);
-	if (index >= 0)
-	{
-		free(msh_inf()->env[index]);
-		msh_inf()->env[index] = ft_strdup(new_var);
-	}
-	else
-		add_new_env_var(new_var, &msh_inf()->env);
-}
-
-static int set_env_var(char *arg, int fd)
-{//begins here 1st
-	char	*equal_sign;
-	char	*key;
-	char	*new_var;
-
-	if (init_env_var(arg, &key, &new_var, &equal_sign) < 0)
-		return (1);
-	if (!is_valid_identifier(key))
-	{
-		free(key);
-		free(new_var);
-		return (handle_invalid_identifier(arg, fd));
-	}
-	update_export(key, new_var, equal_sign);
-	update_env(key, new_var, equal_sign);
-	free(key);
-	free(new_var);
-	return (0);
-}
-
-/**@brief This is the main func to the buil-in export, if it has args it adds them to exported vars, if just "export" prints them all..
- * @param arg An array of strings with the variables to add.
- * @param fd The fd to write to.
+/**@brief Main function for the built-in export command. Adds variables to the 
+ * export array or prints all exported variables if no arguments are provided.
+ * @param arg An array of strings with the variables to add (e.g., ["export", 
+ * "KEY=value"]).
+ * @param fd The file descriptor to write output or error messages to.
  * @return Void.
  */
-void ft_export(char **arg, int fd)
+void	ft_export(char **arg, int fd)
 {
 	int	i;
 
 	msh_inf()->exit_status = 0;
-
-	if (!arg[1]) // No arguments: print all export vars sorted
+	if (!arg[1])
 	{
-		print_export(msh_inf()->export, fd); // Use export instead of env
-		return;
+		print_export(msh_inf()->export, fd);
+		return ;
 	}
 	i = 1;
-	while (arg[i]) // If "export +arg" creates new export
+	while (arg[i])
 	{
 		if (set_env_var(arg[i], fd) != 0)
-			msh_inf()->exit_status = 1; // Error occurred, continue processing
+			msh_inf()->exit_status = 1;
 		i++;
+	}
+}
+
+int	check_errors(t_exec *exec, int i)
+{
+	if (msh_inf()->quit)
+		return (exit_executor(exec, -1), 1);
+	exec->pids[i] = fork();
+	if (exec->pids[i] < 0)
+		exit_executor(exec, 1);
+	return (0);
+}
+
+/**@brief This function redirects the input and output file descriptors.
+ * @param file The file descriptor to redirect.
+ * @param std The standard file descriptor to redirect to (STDIN or STDOUT).
+ * @return Void.
+ */
+void	redirect_io(int file, int std)
+{
+	if (file != -1)
+	{
+		dup2(file, std);
+		close(file);
 	}
 }

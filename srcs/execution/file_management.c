@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 00:22:55 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/20 20:42:10 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 00:33:48 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@
  */
 static char	*get_heredoc_input(t_commands *current, int i)
 {
-	char	*str;//stores the accumulated heredoc input
-	char	*input;//strores the current line of input
+	char	*str;
+	char	*input;
 
 	str = NULL;
 	while (1)
 	{
-		input = readline("> ");//prompts the user for input
+		input = readline("> ");
 		if (msh_inf()->quit)
 		{
 			if (str)
@@ -33,10 +33,10 @@ static char	*get_heredoc_input(t_commands *current, int i)
 			str = NULL;
 			break ;
 		}
-		if (input == NULL)// if EOF is reached (ctrl-d)
+		if (input == NULL)
 			return (printf("(wanted '%s').\n", \
 				current->heredocs[i]), str);
-		if (!ft_strcmp(input, current->heredocs[i]))//if the input matches the heredoc delimiter
+		if (!ft_strcmp(input, current->heredocs[i]))
 			return (free(input), str);
 		str = ft_strjoin(str, input, 1);
 		str = ft_strjoin(str, "\n", 1);
@@ -53,22 +53,22 @@ static char	*get_heredoc_input(t_commands *current, int i)
  */
 static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 {
-	char	*str;// stores the heredoc input
-	int		fd;//stores the fd for the temporary file
+	char	*str;
+	int		fd;
 
-	signal(SIGINT, sig_for_heredoc);// sets the signal handler for ctrl+c
-	fd = open(".temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);//opens or creates the temp file for writing. The "." before tempmakes it a hidden file.
-	str = get_heredoc_input(current, i);//gets the heredoc input from the user
-	if (msh_inf()->quit)//checks if ctrl+c was pressed
+	signal(SIGINT, sig_for_heredoc);
+	fd = open(".temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	str = get_heredoc_input(current, i);
+	if (msh_inf()->quit)
 	{
 		close(fd);
 		exit_executor(exec, 1);
 	}
-	expand_heredoc(&str);//expands the environment variables in the heredoc input
-	write(fd, str, ft_strlen(str));//writes the heredoc input to the temp file
+	expand_heredoc(&str);
+	write(fd, str, ft_strlen(str));
 	close(fd);
 	free(str);
-	exit_executor(exec, 0);// exits the child process with success.
+	exit_executor(exec, 0);
 }
 
 /*@brief This function processes the heredoc files for the current command.
@@ -78,27 +78,27 @@ static void	create_temp_file(t_commands *current, t_exec *exec, int i)
 */
 static int	heredoc_process(t_commands *current, t_exec *exec)
 {
-	int	tmp;//stores the fd of the temp file
-	int	i;//iterate over the array of heredoc files
-	int	pid;//process id of the child process
+	int	tmp;
+	int	i;
+	int	pid;
 
 	i = 0;
-	tmp = -1;//hasn't been opened yet
-	while (current->heredocs && current->heredocs[i])//processes each hearddoc in heardoc[i]
+	tmp = -1;
+	while (current->heredocs && current->heredocs[i])
 	{
-		pid = fork();//creates a child process
-		if (pid == 0)//if we are in the child process
-			create_temp_file(current, exec, i);//creates a temp file for the heredoc input
-		waitpid(pid, &msh_inf()->quit, 0);//wait for the child process to finish
+		pid = fork();
+		if (pid == 0)
+			create_temp_file(current, exec, i);
+		waitpid(pid, &msh_inf()->quit, 0);
 		if (msh_inf()->quit)
 		{
-			msh_inf()->exit_status = 130 * 256;//130 is the exit status for ctrl+c and 256 is how it's stored in the waitpid function
+			msh_inf()->exit_status = 130 * 256;
 			break ;
 		}
 		i++;
 	}
-	if (!msh_inf()->quit)//if not interrupted
-		tmp = open(".temp.txt", O_RDONLY, 0777);//open the temp file in read only mode
+	if (!msh_inf()->quit)
+		tmp = open(".temp.txt", O_RDONLY, 0777);
 	return (tmp);
 }
 
@@ -110,29 +110,29 @@ static int	heredoc_process(t_commands *current, t_exec *exec)
  */
 int	input_redirect(t_commands *current, t_exec *exec)
 {
-	int	i;//iterate over the array of input redirection files
-	int	input;//fd for the last successful opened input file.
-	int	heredoc;//fd for the last successful opened heredoc file.
+	int	i;
+	int	input;
+	int	heredoc;
 
 	i = -1;
-	input = -1;//indicate that no input file has been opened yet.
-	if (!current->input)//if there is no input redirection(<, <<)
+	input = -1;
+	if (!current->input)
 		return (-1);
-	heredoc = heredoc_process(current, exec);//process heredoc files if any
-	if (msh_inf()->quit)//if ctrl+c was pressed, exit the program
+	heredoc = heredoc_process(current, exec);
+	if (msh_inf()->quit)
 		return (-1);
-	while (current->infiles && current->infiles[++i] && input != -2)//ensures there are input files and checks if the input file at position[i] is valid, and if there is no problem opening it.
+	while (current->infiles && current->infiles[++i] && input != -2)
 	{
-		close_fd(input);//ensures only one file is open at a time.
-		input = open(current->infiles[i], O_RDONLY, 0777);//open in read only mode
-		if (input == -1)//open failed
-			input = -2;//flag to indicate that the file was not opened successfully and end the loop.
+		close_fd(input);
+		input = open(current->infiles[i], O_RDONLY, 0777);
+		if (input == -1)
+			input = -2;
 	}
 	if (input == -2)
-		redirect_error(current->infiles[i - 1]);// passes the name of the file that failed to open.
-	if (!ft_strcmp(current->input, "\7\7") && input != -2)// if the less than is a heredoc, and the input file was opened successfully.
-		return (close_fd(input), heredoc);//close the input file and return the heredoc file descriptor.
-	return (close_fd(heredoc), input);//close the heredoc file and return the input file descriptor.
+		redirect_error(current->infiles[i - 1]);
+	if (!ft_strcmp(current->input, "\7\7") && input != -2)
+		return (close_fd(input), heredoc);
+	return (close_fd(heredoc), input);
 }
 
 /**@brief This function handles the output redirection (>, >>) for the commands.
@@ -142,19 +142,19 @@ int	input_redirect(t_commands *current, t_exec *exec)
  */
 int	output_redirect(t_commands *current, t_exec *exec)
 {
-	int		i;//iterate over the array of output & outfiles
-	int		fd;//fd for the last successfully opened output file.
-	int		flag;//flag to indicate if the file should be truncated or appended.
+	int		i;
+	int		fd;
+	int		flag;
 
-	if (!current->output || exec->files[0] == -2)//checks if there's any output redirection and if there was an error opening the input file.
+	if (!current->output || exec->files[0] == -2)
 		return (-1);
 	i = 0;
-	fd = -1;//hasnt been opened
-	while (current->outfiles[i] && fd != -2)//there's a filename and file was opened successfully
+	fd = -1;
+	while (current->outfiles[i] && fd != -2)
 	{
-		close_fd(fd);//ensures only the final output file is open.
-		flag = O_APPEND;//default to append mode(>>)
-		if (!ft_strcmp(current->output[i], "\6"))//truncate mode(>)overwrites the file
+		close_fd(fd);
+		flag = O_APPEND;
+		if (!ft_strcmp(current->output[i], "\6"))
 			flag = O_TRUNC;
 		fd = open(current->outfiles[i], O_WRONLY | O_CREAT | flag, 0777);
 		if (fd == -1)
@@ -162,6 +162,6 @@ int	output_redirect(t_commands *current, t_exec *exec)
 		i++;
 	}
 	if (fd == -2)
-		redirect_error(current->outfiles[i - 1]);// last file attempted
+		redirect_error(current->outfiles[i - 1]);
 	return (fd);
 }

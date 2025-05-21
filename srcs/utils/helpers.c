@@ -6,7 +6,7 @@
 /*   By: tiade-al <tiade-al@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 23:58:35 by tiade-al          #+#    #+#             */
-/*   Updated: 2025/05/14 12:54:05 by tiade-al         ###   ########.fr       */
+/*   Updated: 2025/05/21 02:07:41 by tiade-al         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	is_redirection(char *str)
 			!ft_strcmp(str, "\6\6") || \
 			!ft_strcmp(str, "\7") || \
 			!ft_strcmp(str, "\7\7"))
-			return (1);
+		return (1);
 	return (0);
 }
 
